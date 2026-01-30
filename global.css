@@ -1,0 +1,13 @@
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  overflow: hidden;
+}
+
+bird-flock {
+  height: 500px;
+  width: 1000px;
+}
