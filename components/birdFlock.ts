@@ -1,40 +1,67 @@
 import './birdflock.css';
+import './flockControls';
+import FlockControls from './flockControls';
 import {
   defaultConfig,
   createFlock,
   updateFlock,
 } from '../services/birdFlockAlgo';
+import type { FlockConfig } from '../services/birdFlockAlgo';
 
 export default class BirdFlock extends HTMLElement {
   private elements: HTMLDivElement[] = [];
-
-  constructor() {
-    super();
-  }
+  private flock: ReturnType<typeof createFlock> = [];
+  private config: FlockConfig = { ...defaultConfig };
 
   connectedCallback() {
-    const NUMBER_OF_BOIDS = 300;
-    const HEIGHT = 500;
-    const WIDTH = 1000;
+    const controls = document.createElement('flock-controls') as FlockControls;
+    const button = document.createElement('button');
+    button.textContent = 'Start Simulazione';
 
-    const flock = createFlock(NUMBER_OF_BOIDS, WIDTH, HEIGHT);
+    const panel = document.createElement('div');
+    panel.className = 'setup-panel';
+    panel.appendChild(controls);
+    panel.appendChild(button);
+    this.before(panel);
 
-    for (let boid of flock) {
-      const boidE = document.createElement('div');
-      boidE.className = `boid ${boid.x} - ${boid.y}`;
-      boidE.style.transform = `translate(${boid.x}px, ${boid.y}px)`;
-      this.elements.push(boidE);
-      this.appendChild(boidE);
+    controls.addEventListener('settings-change', ((e: CustomEvent) => {
+      const s = e.detail;
+      this.config.visualRange = s.visualRange;
+      this.config.maxSpeed = s.maxSpeed;
+      this.config.protectedRange = s.separation;
+    }) as EventListener);
+
+    button.addEventListener('click', () => {
+      const s = controls.getSettings();
+      this.config.visualRange = s.visualRange;
+      this.config.maxSpeed = s.maxSpeed;
+      this.config.protectedRange = s.separation;
+
+      this.flock = createFlock(s.numBoids, this.config.width, this.config.height);
+      this.renderFlock();
+      this.startSimulation();
+      panel.hidden = true;
+    }, { once: true });
+  }
+
+  private renderFlock() {
+    for (const boid of this.flock) {
+      const el = document.createElement('div');
+      el.className = 'boid';
+      el.style.transform = `translate(${boid.x}px, ${boid.y}px)`;
+      this.elements.push(el);
+      this.appendChild(el);
     }
+  }
 
-    const id = () => setInterval(() => {
-      updateFlock(flock, defaultConfig);
+  private startSimulation() {
+    setInterval(() => {
+      updateFlock(this.flock, this.config);
       for (let i = 0; i < this.elements.length; ++i) {
         this.elements[i].style.transform =
-          `translate(${flock[i].x}px, ${flock[i].y}px)`;
+          `translate(${this.flock[i].x}px, ${this.flock[i].y}px)`;
       }
     }, 10);
-    id();
   }
 }
 

@@ -1,0 +1,53 @@
+flock-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 16px;
+  background: #1a1a1a;
+  border-radius: 8px;
+  min-width: 200px;
+}
+
+flock-controls h3 {
+  margin: 0 0 8px 0;
+  color: #fff;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+flock-controls .control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+flock-controls label {
+  color: #ccc;
+  font-size: 13px;
+  display: flex;
+  justify-content: space-between;
+}
+
+flock-controls label span {
+  color: #fff;
+  font-weight: bold;
+}
+
+flock-controls input[type="range"] {
+  width: 100%;
+  height: 6px;
+  background: #333;
+  border-radius: 3px;
+  outline: none;
+  cursor: pointer;
+}
+
+flock-controls input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 14px;
+  height: 14px;
+  background: #e74c3c;
+  border-radius: 50%;
+  cursor: pointer;
+}
